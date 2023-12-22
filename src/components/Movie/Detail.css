@@ -1,0 +1,40 @@
+.detailMovie {
+  height: calc(100vh - 80px);
+  border: 1px solid #bfc8de;
+  border-radius: 8px;
+  overflow: scroll;
+}
+
+textarea {
+  width: 100%;
+  min-height: 120px;
+  border-radius: 8px;
+  border: 1px solid #bfc8de;
+}
+
+h2 {
+  position: sticky;
+  top: 0;
+  padding: 12px;
+  margin: 0;
+  border: 1px solid #bfc8de;
+}
+
+.imgDetail {
+  width: 100%;
+  height: 400px !important;
+  object-fit: cover;
+}
+.star-rating {
+    font-size: 30px;
+    cursor: pointer;
+  }
+  
+  .star-filled {
+    color: rgb(14, 185, 243); /* Màu sao được chọn */
+  }
+  
+  .star-empty {
+    color: #ccc; /* Màu sao chưa chọn */
+  }
+  

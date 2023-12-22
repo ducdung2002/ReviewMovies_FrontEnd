@@ -1,0 +1,76 @@
+.carousel-image {
+  height: 550px; /* Điều chỉnh chiều cao mong muốn */
+  object-fit: cover; 
+}
+.categorys {
+  background-color: #1e1e2d;
+  align-items: center;
+  padding: 0;
+  height: calc(100vh - 80px);
+  border-radius: 8px;
+}
+
+.categorys .categoryTitle {
+  font-size: 24px;
+  font-weight: 700;
+  height: 60px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  color: #fff;
+}
+
+.categorys .category {
+  height: 50px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  color: #a5b1c2;
+  cursor: pointer;
+}
+
+.category:hover {
+  background-color: #3a4060;
+}
+
+.choose {
+  background-color: #17a2b8 !important;
+  color: #fff !important;
+}
+
+.movies {
+  overflow: scroll;
+  max-height: calc(100vh - 140px);
+  border: 1px solid #bfc8de;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.card {
+  width: 100%;
+}
+
+.card h5 {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.card .btn {
+  width: 100%;
+  color: white !important;
+}
+
+.card .card-img-top {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card .h5 {
+  color: rgb(49, 94, 230);
+}
+
+.header {
+  height: 60px;
+}
