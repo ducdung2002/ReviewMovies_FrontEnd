@@ -94,7 +94,16 @@ function Home() {
     setMovies(sortedMovies);
   };
 
+
   const Movies = ({ movies }) => {
+    const calculateAverageRating = (ratings) => {
+      if (ratings && ratings.length > 0) {
+        const totalStars = ratings.reduce((acc, curr) => acc + curr.stars, 0);
+        const averageRating = totalStars / ratings.length;
+        return averageRating.toFixed(1);
+      }
+      return 0;
+    };
     return (
       <div className="movies">
         <Row xs={1} sm={2} md={3} lg={4} className="g-4">
@@ -116,7 +125,7 @@ function Home() {
                   </Card.Text>
                   <Card.Text>
                     {" "}
-                    Điểm: <span className="star-filled">★</span> {m.rating}
+                    Điểm: <span className="star-filled">★</span> {calculateAverageRating(m.ratings)}
                   </Card.Text>
                   <Button
                     variant="info"

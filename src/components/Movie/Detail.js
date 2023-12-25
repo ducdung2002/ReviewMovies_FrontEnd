@@ -12,9 +12,6 @@ import {
 import "./Detail.css";
 import axios from "axios";
 const MovieDetail = () => {
-  const [evaluate, setEvaluate] = useState(0);
-  const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([]);
   const [movie, setMovie] = useState({});
   const { id } = useParams();
   const [categories, setCategories] = useState([]);
@@ -49,41 +46,48 @@ const MovieDetail = () => {
     }
   };
 
-  const handleComment = () => {
-    // Xử lý đánh giá và bình luận
-    const newComment = { evaluate, comment };
-    setComments([...comments, newComment]);
-    // Đặt lại giá trị cho ô đánh giá và bình luận sau khi thêm
-    setEvaluate(0);
-    setComment("");
-  };
-
-  const [rating, setRating] = useState(0); // Số sao được đánh giá, khởi tạo là 0
+  const [rating, setRating] = useState(0);
 
   const handleStarClick = (value) => {
     setRating(value);
   };
 
-  const Comments = ({ comments }) => {
-    return (
-      <div>
-        {comments.map((comment, index) => (
-          <Card key={index} className="mb-2">
-            <Card.Body>
-              <Card.Text>
-                <strong>Điểm đánh giá:</strong>
-                {comment.evaluate}
-              </Card.Text>
-              <Card.Text>
-                <strong>Bình luận:</strong> {comment.comment}
-              </Card.Text>
-            </Card.Body>
-          </Card>
-        ))}
-      </div>
-    );
+  const handleSubmitRating = () => {
+    if (rating === 0) {
+      console.error("Vui lòng chọn số sao để đánh giá.");
+      return;
+    }
+
+    // Gửi đánh giá lên server
+    axios
+      .post(`http://localhost:9999/movies/${id}/rate`, { stars: rating })
+      .then((response) => {
+        console.log("Rating saved successfully");
+        axios
+          .get(`http://localhost:9999/movies/${id}`)
+          .then((response) => {
+            setMovie(response.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching movie after rating:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Error saving rating:", error);
+      });
   };
 
+  const calculateAverageRating = () => {
+    if (movie.ratings && movie.ratings.length > 0) {
+      const totalStars = movie.ratings.reduce(
+        (acc, curr) => acc + curr.stars,
+        0
+      );
+      const averageRating = totalStars / movie.ratings.length;
+      return averageRating.toFixed(1); 
+    }
+    return 0; 
+  };
   return (
     <Container>
       <Row>
@@ -102,13 +106,16 @@ const MovieDetail = () => {
               </p>
               <p>
                 <strong>Điểm đánh giá:</strong>{" "}
-                <span className="star-filled">★</span> {movie.rating}
+                <span className="star-filled">★</span>{" "}
+                {calculateAverageRating()}
               </p>
               <p>
                 <strong>Mô tả:</strong> {movie.description}
               </p>
               <p>
-                <Button variant="info" onClick={openTrailerInNewTab}>Xem Trailer</Button> 
+                <Button variant="info" onClick={openTrailerInNewTab}>
+                  Xem Trailer
+                </Button>
               </p>
               <hr />
               <h3>Chi tiết đánh giá:</h3>
@@ -135,7 +142,9 @@ const MovieDetail = () => {
                     </div>
                   </Col>
                   <Col sm={6} lg={6}>
-                    <Button variant="info">Gửi đánh giá</Button>
+                    <Button variant="info" onClick={handleSubmitRating}>
+                      Gửi đánh giá
+                    </Button>
                   </Col>
                 </Row>
                 <Form.Group
@@ -145,21 +154,13 @@ const MovieDetail = () => {
                   <Form.Label>
                     <strong>Bình luận:</strong>
                   </Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                  />
+                  <Form.Control as="textarea" rows={3} />
                 </Form.Group>
-                <Button variant="info" onClick={handleComment}>
-                  Đăng
-                </Button>
+                <Button variant="info">Đăng</Button>
               </Form>
 
               <hr />
               <h3>Bình luận</h3>
-              <Comments comments={comments} />
             </div>
           </div>
         </Col>
