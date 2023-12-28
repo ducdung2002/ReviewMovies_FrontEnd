@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Container,
-  Row,
-  Col,
-  Image,
-  Form,
-  Button,
-  Card,
-} from "react-bootstrap";
+import { Container, Row, Col, Image, Form, Button } from "react-bootstrap";
 import "./Detail.css";
 import axios from "axios";
 const MovieDetail = () => {
   const [movie, setMovie] = useState({});
   const { id } = useParams();
   const [categories, setCategories] = useState([]);
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     axios
@@ -84,10 +78,63 @@ const MovieDetail = () => {
         0
       );
       const averageRating = totalStars / movie.ratings.length;
-      return averageRating.toFixed(1); 
+      return averageRating.toFixed(1);
     }
-    return 0; 
+    return 0;
   };
+
+  const handleCommentChange = (e) => {
+    setComment(e.target.value);
+  };
+
+  const handlePostComment = async () => {
+    const token = localStorage.getItem("token");
+
+    const newCommentObject = {
+      content: comment,
+      movieId: movie._id,
+      parentCommentId: null,
+    };
+
+    try {
+      const response = await axios.post(
+        `http://localhost:9999/comment`,
+        newCommentObject,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Comment posted successfully", response);
+
+      setComment("");
+
+      axios
+        .get(`http://localhost:9999/comment/${id}`)
+        .then((response) => {
+          setComments(response.data.comments); // Cập nhật state comments với danh sách bình luận từ API
+        })
+        .catch((error) => {
+          console.error("Error fetching comments:", error);
+        });
+    } catch (error) {
+      console.error("Error posting comment", error);
+    }
+  };
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:9999/comment/${id}`)
+      .then((response) => {
+        setComments(response.data.comments);
+      })
+      .catch((error) => {
+        console.error("Error fetching comments:", error);
+      });
+  }, [id]);
+
   return (
     <Container>
       <Row>
@@ -154,13 +201,33 @@ const MovieDetail = () => {
                   <Form.Label>
                     <strong>Bình luận:</strong>
                   </Form.Label>
-                  <Form.Control as="textarea" rows={3} />
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    value={comment}
+                    onChange={handleCommentChange}
+                  />
                 </Form.Group>
-                <Button variant="info">Đăng</Button>
+                <Button variant="info" onClick={handlePostComment}>
+                  Đăng
+                </Button>
               </Form>
 
               <hr />
               <h3>Bình luận</h3>
+              {comments && comments.length > 0 ? (
+                comments.map((comment) => (
+                  <div key={comment._id}>
+                    <p>
+                      <strong>Content:</strong> {comment.content}
+                    </p>
+                    {/* Hiển thị các thông tin khác của bình luận nếu cần */}
+                    <hr />
+                  </div>
+                ))
+              ) : (
+                <p>No comments yet.</p>
+              )}
             </div>
           </div>
         </Col>

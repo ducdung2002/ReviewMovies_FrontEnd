@@ -13,8 +13,6 @@ textarea {
 }
 
 h2 {
-  position: sticky;
-  top: 0;
   padding: 12px;
   margin: 0;
   border: 1px solid #bfc8de;
